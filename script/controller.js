@@ -1,19 +1,77 @@
 $().ready(function(){
+	init();
+
+	//鼠标进入宫格区域显示头部数字
+	$(".content_class").unbind();
+	$(".content_class").bind("mouseover",function(){
+		$(".content_head_class").css("display",'block');
+	});
+	$(".content_class").bind("mouseout",function(){
+		$(".unit_class_over").attr("class","unit_class");
+		if(isClick()){
+			$(".content_head_class").css("display",'block');
+		}else{
+			$(".content_head_class").css("display",'none');
+		}
+	});
+	//鼠标点击事件
+	$(".unit_class").unbind();
+	$(".unit_class").bind("click",function(){
+		var position = $(this).attr("value").split(",");
+		//var readyNumbers = getReadyNumbers(position);
+
+
+		//alert(getId()[0]/1+getId()[1]/1);
+		//init();
+		$(".unit_class_click").attr("class","unit_class");
+		if(isClick()){
+			$(this).attr("class","unit_class");
+			setClick(false);
+			clearId();
+		}else{
+			$(this).attr("class","unit_class_click");
+			setClick(true);
+			setId(position);
+		}
+
+	});
+	//鼠标光标在上面事件
+	////$(".unit_class").unbind();
+	$(".unit_class").bind('mouseover',function(){
+		var position = $(this).attr('value').split(',');
+		var readyNumbers = getReadyNumbers(position);
+		$('#content_head').children().remove();
+		for(var k =0;k<readyNumbers.length;k++) {
+			var unit_box = $('<div class="unit_class_head"></div>');
+
+			$(unit_box).text(readyNumbers[k]);
+			$(unit_box).appendTo($('#content_head'));
+		}
+		$(".unit_class_over").attr("class","unit_class");
+		$(this).attr("class","unit_class_over");
+		$(".unit_class_head").unbind();
+		$(".unit_class_head").bind('click',function(){
+			var val = $(this).text();
+			//alert(val);
+			$(".unit_class_click").text(val);
+		});
+	});
+
+});
+var temp = {
+	isClick:false,
+	id:[]
+}
+var init = function (){
 	for(var i = 0;i<9;i++){
 		for(var k =0;k<9;k++) {
 			var unit_box = $('<div class="unit_class"></div>');
 			$id = '' + (i*9+k);
 			$(unit_box).appendTo($('#content')).attr('id', $id).attr('value', ''+i+','+k);
 		}
+		//alert();
 	}
-	$(".unit_class").unbind();
-	$(".unit_class").bind('click',function(){
-		var position = $(this).attr('value').split(',');
-		var readyNumbers = getReadyNumbers(position);
-		alert(position);
-	});
-
-});
+}
 var squer_numbers= [
 	[0,0,0,0,0,0,0,2,0],
 	[0,0,0,0,0,0,0,0,0],
@@ -26,7 +84,19 @@ var squer_numbers= [
 	[0,1,0,0,0,0,0,0,0]
 ];
 getReadyNumbers = function(position){
-	return position;
+	return [1,2,3,4,5,6,7,8,9];
+}
+setClick = function (flag){
+	temp.isClick = flag;
+}
+setId = function (position){
+	temp.id = position;
+}
+getId = function() {
+	return temp.id;
+}
+clearId = function() {
+	temp.id = [];
 }
 /**
  * 检查行或者列是否重复
@@ -47,7 +117,9 @@ var isRepeat=function(arrs){
 var isRepeatColumn=function(arr_col){
 
 }
-
+var isClick = function(){
+	return temp.isClick;
+}
 /**
  * 检查一个九宫格是否有重复
  * @param arr_unb 一個九宮格里的所有數子
