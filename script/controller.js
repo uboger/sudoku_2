@@ -52,11 +52,20 @@ $().ready(function () {
         var readyNumbers = getReadyNumbers(position);
         //alert(getId()[0]/1+getId()[1]/1);
         //init();.
-        $(".unit_class_click").attr("class", "unit_class");
+       // $(".unit_class_click").attr("class", "unit_class");
         if (isClick()) {
-            $(this).attr("class", "unit_class").attr("title", "单击一下就可以填入数字啦！");
-            setClick(false);
-            clearId();
+            if(getId()[0]==position[0]&&getId()[1]==position[1]){
+                $(".unit_class_click").attr("class", "unit_class").attr("title", "单击一下就可以填入数字啦！");
+                setClick(false);
+                clearId();
+
+            }else{
+                $(".unit_class_click").attr("class", "unit_class").attr("title", "单击一下就可以填入数字啦！");
+                $(this).attr("class", "unit_class_click").attr("title", "单击上面蓝色区域的数字进行填充");
+                setClick(true);
+                setId(position);
+                setReady_numbers(readyNumbers)
+            }
         } else {
             $(this).attr("class", "unit_class_click").attr("title", "单击上面蓝色区域的数字进行填充");
             setClick(true);
@@ -77,7 +86,7 @@ $().ready(function () {
             $(unit_box).text(readyNumbers[k]);
             $(unit_box).appendTo($('#content_head'));
         }
-        $(".unit_class_over").attr("class", "unit_class");
+        $(".unit_class_over").attr("class", "unit_class").attr("title", "单击一下就可以填入数字啦！");
         $(this).attr("class", "unit_class_over");
         $(".unit_class_head").unbind();
         $(".unit_class_head").bind('click', function () {
@@ -118,17 +127,7 @@ var init = function () {
         //alert();
     }
 }
-var squer_numbers = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0]
-];
+
 //去除已经填写的数字
 getReadyNumbers = function (position) {
     var __x = position[0] / 1;
@@ -141,7 +140,7 @@ getReadyNumbers = function (position) {
 getUniqueNumber = function (no_x, no_y, no_box) {
     var i = 0;
     unique_no = [1,2,3,4,5,6,7,8,9];
-    meger_arr = [no_x, no_y, no_box];
+    meger_arr = [no_box,no_x, no_y];
     for (var k = 0; k < meger_arr.length; k++) {
         for (var j = 0; j < meger_arr[k].length; j++) {
             if (isRepeatConsult(meger_arr[k][j], unique_no)) {
@@ -215,55 +214,76 @@ var getRow = function (index) {
  * @returns {number[]}
  */
 var getColumn = function (index) {
-    var numbers = new Array(squer_numbers.length);
-    for (var i = 0; i < numbers.length; i++) {
+    var numbers = [];
+    for (var i = 0; i < squer_numbers.length; i++) {
         numbers[i] = squer_numbers[i][index];
     }
     return numbers;
 }
+var squer_numbers = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
 var getUnitBox = function (_x, _y) {
     var re_no = [];
+    //第一宫
     if (_x < 3 && _y < 3) {
         re_no = [squer_numbers[0][0], squer_numbers[0][1], squer_numbers[0][2],
             squer_numbers[1][0], squer_numbers[1][1], squer_numbers[1][2],
             squer_numbers[2][0], squer_numbers[2][1], squer_numbers[2][2]
         ];
-    } else if (_x >= 3 && _x < 6 && _y < 3) {
+        //第二宫
+    } else if (_y >= 3 && _y < 6 && _x < 3) {
         re_no = [squer_numbers[0][3], squer_numbers[0][4], squer_numbers[0][5],
             squer_numbers[1][3], squer_numbers[1][4], squer_numbers[1][5],
             squer_numbers[2][3], squer_numbers[2][4], squer_numbers[2][5]
         ];
-    } else if (_x >= 6 && _x < 9 && _y < 3) {
+
+        //第三宫
+    } else if (_y >= 6 && _y < 9 && _x < 3) {
         re_no = [squer_numbers[0][6], squer_numbers[0][7], squer_numbers[0][8],
             squer_numbers[1][6], squer_numbers[1][7], squer_numbers[1][8],
             squer_numbers[2][6], squer_numbers[2][7], squer_numbers[2][8]
         ];
-    } else if (_x < 3 && _y >= 3 && _y < 6) {
+        //第四宫
+    } else if (_y < 3 && _x >= 3 && _x < 6) {
         re_no = [squer_numbers[3][0], squer_numbers[3][1], squer_numbers[3][2],
             squer_numbers[4][0], squer_numbers[4][1], squer_numbers[4][2],
             squer_numbers[5][0], squer_numbers[5][1], squer_numbers[5][2]
         ];
-    } else if (_x >= 3 && _x < 6 && _y >= 3 && _y < 6) {
+        //第五宫
+    } else if (_y >= 3 && _y < 6 && _x >= 3 && _x < 6) {
         re_no = [squer_numbers[3][3], squer_numbers[3][4], squer_numbers[3][5],
             squer_numbers[4][3], squer_numbers[4][4], squer_numbers[4][5],
             squer_numbers[5][3], squer_numbers[5][4], squer_numbers[5][5]
         ];
-    } else if (_x >= 6 && _x < 9 && _y >= 3 && _y < 6) {
+        //第六宫
+    } else if (_y >= 6 && _y < 9 && _x >= 3 && _x < 6) {
         re_no = [squer_numbers[3][6], squer_numbers[3][7], squer_numbers[3][8],
             squer_numbers[4][6], squer_numbers[4][7], squer_numbers[4][8],
             squer_numbers[5][6], squer_numbers[5][7], squer_numbers[5][8]
         ];
-    } else if (_x < 3 && _y >= 6 && _y < 9) {
+        //第7宫
+    } else if (_y < 3 && _x >= 6 && _x < 9) {
         re_no = [squer_numbers[6][0], squer_numbers[6][1], squer_numbers[6][2],
             squer_numbers[7][0], squer_numbers[7][1], squer_numbers[7][2],
             squer_numbers[8][0], squer_numbers[8][1], squer_numbers[8][2]
         ];
-    } else if (_x >= 3 && _x < 6 && _y >= 6 && _y < 9) {
+        //第8宫
+    } else if (_y >= 3 && _y < 6 && _x >= 6 && _x < 9) {
         re_no = [squer_numbers[6][3], squer_numbers[6][4], squer_numbers[6][5],
             squer_numbers[7][3], squer_numbers[7][4], squer_numbers[7][5],
             squer_numbers[8][3], squer_numbers[8][4], squer_numbers[8][5]
         ];
-    } else if (_x >= 6 && _x < 9 && _y >= 6 && _y < 9) {
+        //第9宫
+    } else if (_y >= 6 && _y < 9 && _x >= 6 && _x < 9) {
         re_no = [squer_numbers[6][6], squer_numbers[6][7], squer_numbers[6][8],
             squer_numbers[7][6], squer_numbers[7][7], squer_numbers[7][8],
             squer_numbers[8][6], squer_numbers[8][7], squer_numbers[8][8]
