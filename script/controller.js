@@ -48,6 +48,9 @@ $().ready(function () {
     //鼠标点击事件
     $(".unit_class").unbind();
     $(".unit_class").bind("click", function () {
+        if(successful()){
+            alert("successful")
+        }
         var position = $(this).attr("value").split(",");
         var readyNumbers = getReadyNumbers(position);
         //alert(getId()[0]/1+getId()[1]/1);
@@ -169,6 +172,31 @@ var isRepeatConsult = function (consult, arrs) {
         }
     }
     return false;
+}
+isSumOk = function (arrs){
+    var sum = 0;
+    for(var i=0;i<arrs.length;i++){
+        sum +=arrs[i];
+    }
+    return sum==45;
+}
+isEnd = function (_x,_y){
+    arr_x = getRow(_x);
+    arr_y = getColumn(_y);
+    arr_box = getUnitBox(_x,_y);
+    return isSumOk(arr_box) && isSumOk(arr_x) && isSumOk(arr_y);
+}
+successful = function (){
+    var flag = true;
+    for (var  i = 0;i<squer_numbers.length;i++){
+        for(var j=0;j<squer_numbers[i].length;j++){
+            if(!isEnd(i,j)){
+                return isEnd(i,j);
+            }
+
+        }
+    }
+    return flag;
 }
 /**
  * 检查行或者列是否重复
