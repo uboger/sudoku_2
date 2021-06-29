@@ -14,6 +14,6 @@
     ![](https://exp-picture.cdn.bcebos.com/359bee5e4a23797198495b6e93196120a6cde3ee.jpg?x-bce-process=image%2Fresize%2Cm_lfit%2Cw_500%2Climit_1%2Fformat%2Cf_jpg%2Fquality%2Cq_80)
   
 
-- 所有的格填满数组且符合所有规则
+- 所有的格填满数字且符合所有规则
 
 ![](https://github.com/uboger/sudoku_2/blob/master/face.png)
