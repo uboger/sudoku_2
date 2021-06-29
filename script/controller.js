@@ -48,21 +48,33 @@ $().ready(function () {
     //鼠标点击事件
     $(".unit_class").unbind();
     $(".unit_class").bind("click", function () {
-        if(successful()){
-            alert("successful")
+        if (successful()) {
+            alert("恭喜通过，用时"+temp.timer.value);
+            if(temp.timer.statu){
+                clearInterval(timePanel);
+                temp.timer.statu = false;
+            }
+            return;
+        }else if(isFailed()){
+            alert("已经无路了，用时"+temp.timer.value);
+            if(temp.timer.statu){
+                clearInterval(timePanel);
+                temp.timer.statu = false;
+            }
+            return;
         }
         var position = $(this).attr("value").split(",");
         var readyNumbers = getReadyNumbers(position);
         //alert(getId()[0]/1+getId()[1]/1);
         //init();.
-       // $(".unit_class_click").attr("class", "unit_class");
+        // $(".unit_class_click").attr("class", "unit_class");
         if (isClick()) {
-            if(getId()[0]==position[0]&&getId()[1]==position[1]){
+            if (getId()[0] == position[0] && getId()[1] == position[1]) {
                 $(".unit_class_click").attr("class", "unit_class").attr("title", "单击一下就可以填入数字啦！");
                 setClick(false);
                 clearId();
 
-            }else{
+            } else {
                 $(".unit_class_click").attr("class", "unit_class").attr("title", "单击一下就可以填入数字啦！");
                 $(this).attr("class", "unit_class_click").attr("title", "单击上面蓝色区域的数字进行填充");
                 setClick(true);
@@ -106,19 +118,31 @@ $().ready(function () {
     });
 
 });
-setReady_numbers = function (arrs){
+setReady_numbers = function (arrs) {
     temp.ready_no = arrs;
 }
-getReady_nos = function (){
+getReady_nos = function () {
     return temp.ready_no;
 }
 fill_num = function (id, val) {
+    if(!temp.timer.statu){
+        setInterval(timePanel, 1000);
+        temp.timer.statu=true;
+    }
     squer_numbers[id[0]][id[1]] = val;
 }
 var temp = {
     isClick: false,
     id: [],
-    ready_no:[]
+    ready_no: [],
+    timer: {
+        statu:false,
+        ss: 0,
+        s: 0,
+        min: 0,
+        h: 0,
+        value:""
+    }
 }
 var init = function () {
     for (var i = 0; i < 9; i++) {
@@ -142,8 +166,8 @@ getReadyNumbers = function (position) {
 }
 getUniqueNumber = function (no_x, no_y, no_box) {
     var i = 0;
-    unique_no = [1,2,3,4,5,6,7,8,9];
-    meger_arr = [no_box,no_x, no_y];
+    unique_no = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    meger_arr = [no_box, no_x, no_y];
     for (var k = 0; k < meger_arr.length; k++) {
         for (var j = 0; j < meger_arr[k].length; j++) {
             if (isRepeatConsult(meger_arr[k][j], unique_no)) {
@@ -173,30 +197,45 @@ var isRepeatConsult = function (consult, arrs) {
     }
     return false;
 }
-isSumOk = function (arrs){
+isSumOk = function (arrs) {
     var sum = 0;
-    for(var i=0;i<arrs.length;i++){
-        sum +=arrs[i];
+    for (var i = 0; i < arrs.length; i++) {
+        sum += arrs[i];
     }
-    return sum==45;
+    return sum == 45;
 }
-isEnd = function (_x,_y){
+isEnd = function (_x, _y) {
     arr_x = getRow(_x);
     arr_y = getColumn(_y);
-    arr_box = getUnitBox(_x,_y);
+    arr_box = getUnitBox(_x, _y);
     return isSumOk(arr_box) && isSumOk(arr_x) && isSumOk(arr_y);
 }
-successful = function (){
+successful = function () {
     var flag = true;
-    for (var  i = 0;i<squer_numbers.length;i++){
-        for(var j=0;j<squer_numbers[i].length;j++){
-            if(!isEnd(i,j)){
-                return isEnd(i,j);
+    for (var i = 0; i < squer_numbers.length; i++) {
+        for (var j = 0; j < squer_numbers[i].length; j++) {
+            if (!isEnd(i, j)) {
+                return isEnd(i, j);
             }
 
         }
     }
     return flag;
+}
+isFailed = function (){
+    for (var i = 0; i < squer_numbers.length; i++) {
+        for (var j = 0; j < squer_numbers[i].length; j++) {
+            var no_x = getRow(i);
+            var no_y = getColumn(j);
+            var no_box = getUnitBox(i, j);
+            var un_arrs = getUniqueNumber(no_x, no_y, no_box);
+            if (un_arrs.length==0&&squer_numbers[i][j]==0) {
+                return un_arrs.length==0;
+            }
+
+        }
+    }
+    return false;
 }
 /**
  * 检查行或者列是否重复
@@ -357,7 +396,8 @@ function __isRepeat(_arr) {
     }
     return false;
 }
-Array.prototype.indexOf = function(val) {
+
+Array.prototype.indexOf = function (val) {
     for (var i = 0; i < this.length; i++) {
         if (this[i] == val) {
             return i;
@@ -366,9 +406,25 @@ Array.prototype.indexOf = function(val) {
     return -1;
 };
 // 通过索引删除数组元素
-Array.prototype.remove = function(val) {
+Array.prototype.remove = function (val) {
     var index = this.indexOf(val);
     if (index > -1) {
         this.splice(index, 1);
     }
 };
+
+timePanel = function () {
+    ++temp.timer.s;
+    if (temp.timer.s >= 60) {
+        ++temp.timer.min;
+        temp.timer.s = 0;
+    }
+    if (temp.timer.min >= 60) {
+        ++temp.timer.h;
+        temp.timer.min = 0;
+    }
+    temp.timer.value = (temp.timer.h < 10 ? "0" + temp.timer.h : temp.timer.h) + ":" + (temp.timer.min < 10 ? "0" + temp.timer.min : temp.timer.min) + ":" + (temp.timer.s < 10 ? "0" + temp.timer.s : temp.timer.s);
+
+    $(".content_time_class").css("display", "block").text("已用时间:" + temp.timer.value);
+}
+
